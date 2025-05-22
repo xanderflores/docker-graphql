@@ -7,9 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -28,16 +26,15 @@ jobs:
 
     - name: Docker login
       env: 
-        DOCKER_USER: ${{secrets.DOCKER_USER}}
-        DOCKER_TOKEN: ${{secrets.DOCKER_TOKEN}}
-        NEW_VERSION: ${{steps.version.outputs}}
-
+        DOCKER_USER: ${{ secrets.DOCKER_USER }}
+        DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+        NEW_VERSION: ${{ steps.version.outputs.version }}
       run:  |
         echo "Iniciando login"
         docker login -u $DOCKER_USER -p $DOCKER_TOKEN
         echo "New version: $NEW_VERSION!!!"
         echo "Fin del login"
-  
+
     # - name: Build Docker Image
     #   run: |
     #     docker build -t xanderflores12/docker-graphql:0.0.2 .
@@ -46,7 +43,4 @@ jobs:
     #   run: |
     #     docker push xanderflores12/docker-graphql:0.0.2
     #     docker push xanderflores12/docker-graphql:latest
-    
 
-
-   
