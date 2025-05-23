@@ -7,15 +7,17 @@ on:
     branches: [ "main" ]
 
 jobs:
+
   build:
+
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v3
       with:
         fetch-depth: 0
-        
+    
     - name: Git Semantic Version
       uses: PaulHatch/semantic-version@v4.0.3
       with:
@@ -23,27 +25,25 @@ jobs:
         minor_pattern: "feat:"
         format: "${major}.${minor}.${patch}-prerelease${increment}"
       id: version
-
-    - name: Docker login
-      env: 
+    
+    - name: Docker Login
+      env:
         DOCKER_USER: ${{ secrets.DOCKER_USER }}
-        DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
-      run:  |
-        echo "Iniciando login"
-        docker login -u $DOCKER_USER -p $DOCKER_TOKEN
-        echo "New version: $NEW_VERSION!!!"
-        echo "Fin del login"
-
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        
+      run: |
+        docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+        
     - name: Build Docker Image
-      env: 
+      env:
         NEW_VERSION: ${{ steps.version.outputs.version }}
       run: |
-        docker build -t xanderflores12/docker-graphql:$NEW_VERSION .
-
+        docker build -t klerith/docker-graphql:$NEW_VERSION .
+        docker build -t klerith/docker-graphql:latest .
+        
     - name: Push Docker Image
-      env: 
+      env:
         NEW_VERSION: ${{ steps.version.outputs.version }}
       run: |
-        docker push xanderflores12/docker-graphql:$NEW_VERSION
-        docker push xanderflores12/docker-graphql:latest
-
+        docker push klerith/docker-graphql:$NEW_VERSION
+        docker push klerith/docker-graphql:latest
